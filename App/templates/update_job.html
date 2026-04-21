@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Edit Job — WorkBoard{% endblock %}
+
+{% block content %}
+<div class="center-wrap">
+  <div class="form-card" style="max-width:560px;">
+    <h1>Edit Job</h1>
+    <p class="form-subtitle">// update position details</p>
+
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="field">
+        <label for="title">Job Title</label>
+        <input type="text" name="title" id="title" value="{{ job.title }}" required/>
+      </div>
+
+      <div class="field">
+        <label for="description">Description</label>
+        <textarea name="description" id="description" rows="6" required>{{ job.description }}</textarea>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="field">
+          <label for="location">Location</label>
+          <input type="text" name="location" id="location" value="{{ job.location }}" required/>
+        </div>
+
+        <div class="field">
+          <label for="salary">Salary (USD)</label>
+          <input type="number" name="salary" id="salary" value="{{ job.salary }}" step="0.01"/>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full" style="margin-top:0.5rem;">
+        Save Changes →
+      </button>
+    </form>
+
+    <hr class="divider"/>
+
+    <div style="display:flex;gap:0.75rem;">
+      <a href="{% url 'job_list' %}" class="btn btn-ghost" style="flex:1;text-align:center;">← Back</a>
+      <form method="post" action="{% url 'delete_job' job.id %}" style="flex:1;" onsubmit="return confirm('Permanently delete this job?')">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger btn-full">Delete Job</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

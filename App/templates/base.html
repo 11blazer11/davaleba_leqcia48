@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}WorkBoard{% endblock %}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0e0e0e;
+      --surface:   #161616;
+      --card:      #1c1c1c;
+      --border:    #2a2a2a;
+      --accent:    #e8a020;
+      --accent2:   #c4721a;
+      --text:      #e8e4dc;
+      --muted:     #6b6560;
+      --danger:    #c0392b;
+      --success:   #27ae60;
+      --pending:   #e8a020;
+      --radius:    2px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* — NAV — */
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: 0.06em;
+    }
+
+    .nav-logo span { color: var(--text); }
+
+    .nav-links {
+      display: flex;
+      gap: 0.25rem;
+      align-items: center;
+    }
+
+    .nav-links a, .nav-links form button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: var(--radius);
+      transition: color 0.15s, background 0.15s;
+      letter-spacing: 0.04em;
+    }
+
+    .nav-links a:hover, .nav-links form button:hover {
+      color: var(--text);
+      background: var(--border);
+    }
+
+    .nav-links .btn-accent {
+      background: var(--accent);
+      color: #0e0e0e !important;
+      font-weight: 500;
+    }
+
+    .nav-links .btn-accent:hover {
+      background: var(--accent2);
+    }
+
+    /* — MAIN — */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    /* — HEADINGS — */
+    h1, h2, h3 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+    }
+
+    h1 { font-size: 2rem; font-weight: 800; }
+    h2 { font-size: 1.4rem; }
+    h3 { font-size: 1.1rem; }
+
+    /* — FORMS — */
+    .form-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      max-width: 480px;
+      width: 100%;
+    }
+
+    .form-card h1 {
+      margin-bottom: 0.25rem;
+    }
+
+    .form-subtitle {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 2rem;
+    }
+
+    .field {
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="number"],
+    textarea,
+    select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--accent);
+    }
+
+    textarea { resize: vertical; min-height: 100px; }
+
+    .errorlist {
+      list-style: none;
+      color: var(--danger);
+      font-size: 12px;
+      margin-top: 0.4rem;
+    }
+
+    /* — BUTTONS — */
+    .btn {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s;
+      letter-spacing: 0.03em;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0e0e0e;
+    }
+
+    .btn-primary:hover { background: var(--accent2); }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--text);
+      color: var(--text);
+    }
+
+    .btn-danger {
+      background: transparent;
+      border: 1px solid var(--danger);
+      color: var(--danger);
+    }
+
+    .btn-danger:hover {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .btn-full { width: 100%; text-align: center; }
+
+    /* — MESSAGES — */
+    .messages {
+      list-style: none;
+      margin-bottom: 1.5rem;
+    }
+
+    .messages li {
+      background: #2a1212;
+      border: 1px solid var(--danger);
+      border-left: 3px solid var(--danger);
+      color: #e87070;
+      padding: 10px 14px;
+      font-size: 12px;
+      margin-bottom: 0.5rem;
+    }
+
+    /* — STATUS BADGES — */
+    .badge {
+      display: inline-block;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 2px;
+      font-weight: 500;
+    }
+
+    .badge-pending  { background: #2a200a; color: var(--pending); border: 1px solid #4a3510; }
+    .badge-accepted { background: #0a2015; color: var(--success); border: 1px solid #104020; }
+    .badge-rejected { background: #2a0a0a; color: var(--danger);  border: 1px solid #401010; }
+
+    /* — DIVIDER — */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 1.5rem 0;
+    }
+
+    /* — LINK — */
+    a.link {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a.link:hover { text-decoration: underline; }
+
+    /* — CENTERED LAYOUT — */
+    .center-wrap {
+      min-height: calc(100vh - 56px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+
+    /* — CORNER DECORATION — */
+    .form-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-card::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 60px; height: 60px;
+      background: linear-gradient(135deg, transparent 50%, var(--accent) 50%);
+      opacity: 0.15;
+    }
+
+    /* — ANIMATIONS — */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-card, .page-header, .job-card, .app-row {
+      animation: fadeUp 0.35s ease both;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="{% url 'job_list' %}" class="nav-logo">WORK<span>BOARD</span></a>
+  <div class="nav-links">
+    {% if user.is_authenticated %}
+      <a href="{% url 'job_list' %}">Jobs</a>
+      {% if user.user_type == 'employer' %}
+        <a href="{% url 'create_job' %}" class="btn-accent btn">+ Post Job</a>
+      {% endif %}
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button>Logout</button>
+      </form>
+    {% else %}
+      <a href="{% url 'login' %}">Login</a>
+      <a href="{% url 'register' %}" class="btn-accent btn">Register</a>
+    {% endif %}
+  </div>
+</nav>
+
+{% if messages %}
+  <div style="max-width:1100px;margin:1rem auto;padding:0 2rem;">
+    <ul class="messages">
+      {% for msg in messages %}
+        <li>{{ msg }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+{% block content %}{% endblock %}
+
+</body>
+</html>

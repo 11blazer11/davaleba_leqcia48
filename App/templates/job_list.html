@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}Jobs — WorkBoard{% endblock %}
+
+{% block content %}
+<main>
+  <div class="page-header" style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2.5rem;border-bottom:1px solid var(--border);padding-bottom:1.5rem;">
+    <div>
+      <p style="color:var(--accent);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.4rem;">// open positions</p>
+      <h1>Job Board</h1>
+    </div>
+    {% if user.is_authenticated and user.user_type == 'employer' %}
+      <a href="{% url 'create_job' %}" class="btn btn-primary">+ Post a Job</a>
+    {% endif %}
+  </div>
+
+  {% if jobs %}
+    <div style="display:grid;gap:1rem;">
+      {% for job in jobs %}
+        <div class="job-card" style="animation-delay:{{ forloop.counter0 }}00ms;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem 2rem;display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:start;transition:border-color 0.15s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div>
+            <div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.6rem;">
+              <h2 style="font-size:1.1rem;">{{ job.title }}</h2>
+              {% if not job.is_active %}
+                <span class="badge badge-rejected">Closed</span>
+              {% else %}
+                <span class="badge badge-accepted">Active</span>
+              {% endif %}
+            </div>
+
+            <p style="color:var(--muted);font-size:12px;margin-bottom:0.8rem;line-height:1.5;">
+              {{ job.description|truncatewords:25 }}
+            </p>
+
+            <div style="display:flex;gap:1.5rem;font-size:11px;color:var(--muted);">
+              <span>📍 {{ job.location }}</span>
+              {% if job.salary %}
+                <span>💰 ${{ job.salary }}</span>
+              {% endif %}
+              <span>🕒 {{ job.created_at|timesince }} ago</span>
+              <span>by {{ job.employer.username }}</span>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:0.5rem;align-items:flex-end;">
+            {% if user.is_authenticated %}
+              {% if user.user_type == 'applicant' %}
+                <a href="{% url 'apply_to_job' job.id %}" class="btn btn-primary">Apply</a>
+              {% endif %}
+              {% if user == job.employer %}
+                <a href="{% url 'update_job' job.id %}" class="btn btn-ghost">Edit</a>
+                <a href="{% url 'job_applications' job.id %}" class="btn btn-ghost">Applications</a>
+                <form method="post" action="{% url 'delete_job' job.id %}" onsubmit="return confirm('Delete this job?')">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+              {% endif %}
+            {% else %}
+              <a href="{% url 'login' %}" class="btn btn-ghost">Login to Apply</a>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div style="text-align:center;padding:5rem 2rem;color:var(--muted);">
+      <p style="font-size:2rem;margin-bottom:1rem;">—</p>
+      <p style="font-family:'Syne',sans-serif;font-size:1.1rem;color:var(--text);margin-bottom:0.5rem;">No jobs posted yet</p>
+      <p style="font-size:12px;">Check back later or post the first one.</p>
+    </div>
+  {% endif %}
+</main>
+{% endblock %}

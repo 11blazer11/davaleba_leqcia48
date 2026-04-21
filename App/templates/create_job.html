@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Post a Job — WorkBoard{% endblock %}
+
+{% block content %}
+<div class="center-wrap">
+  <div class="form-card" style="max-width:560px;">
+    <h1>Post a Job</h1>
+    <p class="form-subtitle">// fill in the position details</p>
+
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="field">
+        <label for="title">Job Title</label>
+        <input type="text" name="title" id="title" placeholder="e.g. Senior Backend Engineer" required/>
+      </div>
+
+      <div class="field">
+        <label for="description">Description</label>
+        <textarea name="description" id="description" placeholder="Describe the role, responsibilities, requirements..." rows="6" required></textarea>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="field">
+          <label for="location">Location</label>
+          <input type="text" name="location" id="location" placeholder="e.g. Tbilisi / Remote" required/>
+        </div>
+
+        <div class="field">
+          <label for="salary">Salary (USD, optional)</label>
+          <input type="number" name="salary" id="salary" placeholder="e.g. 3500" step="0.01"/>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full" style="margin-top:0.5rem;">
+        Publish Job →
+      </button>
+    </form>
+
+    <hr class="divider"/>
+    <a href="{% url 'job_list' %}" class="btn btn-ghost btn-full">← Back to Jobs</a>
+  </div>
+</div>
+{% endblock %}

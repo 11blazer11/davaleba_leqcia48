@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Applications — {{ job.title }} — WorkBoard{% endblock %}
+
+{% block content %}
+<main>
+  <div class="page-header" style="margin-bottom:2.5rem;border-bottom:1px solid var(--border);padding-bottom:1.5rem;">
+    <p style="color:var(--accent);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.4rem;">// applications received</p>
+    <h1>{{ job.title }}</h1>
+    <p style="color:var(--muted);font-size:12px;margin-top:0.3rem;">
+      {{ applications.count }} applicant{{ applications.count|pluralize }}
+      &nbsp;·&nbsp; {{ job.location }}
+      {% if job.salary %}&nbsp;·&nbsp; ${{ job.salary }}{% endif %}
+    </p>
+  </div>
+
+  {% if applications %}
+    <div style="display:grid;gap:0.75rem;">
+      {% for app in applications %}
+        <div class="app-row" style="animation-delay:{{ forloop.counter0 }}00ms;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:center;">
+          <div>
+            <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.3rem;">
+              <span style="font-family:'Syne',sans-serif;font-weight:600;">{{ app.applicant.username }}</span>
+              {% if app.status == 'pending' %}
+                <span class="badge badge-pending">{{ app.status }}</span>
+              {% elif app.status == 'accepted' %}
+                <span class="badge badge-accepted">{{ app.status }}</span>
+              {% else %}
+                <span class="badge badge-rejected">{{ app.status }}</span>
+              {% endif %}
+            </div>
+            <p style="color:var(--muted);font-size:11px;">Applied {{ app.created_at|timesince }} ago</p>
+          </div>
+
+          <form method="post" action="{% url 'update_application_status' app.id %}" style="display:flex;gap:0.5rem;align-items:center;">
+            {% csrf_token %}
+            <select name="status" style="width:auto;padding:6px 10px;font-size:12px;">
+              <option value="pending"  {% if app.status == 'pending'  %}selected{% endif %}>Pending</option>
+              <option value="accepted" {% if app.status == 'accepted' %}selected{% endif %}>Accept</option>
+              <option value="rejected" {% if app.status == 'rejected' %}selected{% endif %}>Reject</option>
+            </select>
+            <button type="submit" class="btn btn-ghost" style="padding:6px 14px;font-size:12px;">Update</button>
+          </form>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div style="text-align:center;padding:5rem 2rem;color:var(--muted);">
+      <p style="font-size:2rem;margin-bottom:1rem;">—</p>
+      <p style="font-family:'Syne',sans-serif;font-size:1.1rem;color:var(--text);margin-bottom:0.5rem;">No applications yet</p>
+      <p style="font-size:12px;">Share the job listing to attract candidates.</p>
+    </div>
+  {% endif %}
+
+  <div style="margin-top:2rem;">
+    <a href="{% url 'job_list' %}" class="btn btn-ghost">← Back to Jobs</a>
+  </div>
+</main>
+{% endblock %}
