@@ -77,7 +77,7 @@ def update_job(request, id):
         job.save()
         return redirect('job_list')
 
-    return render(request, 'jobs/update_job.html', {'job': job})
+    return render(request, 'update_job.html', {'job': job})
 
 
 @login_required
@@ -85,7 +85,7 @@ def delete_job(request, job_id):
     job = get_object_or_404(Job, id=job_id)
 
     if job.employer != request.user:
-        raise PermissionDenied('You don\'t have access to this job.')
+        raise PermissionDenied("You don't have access to this job.")
 
     job.delete()
     return redirect('job_list')
